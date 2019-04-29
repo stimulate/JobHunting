@@ -173,8 +173,8 @@ export default class ManageJob extends React.Component {
         'Content-Type': 'application/json'
       },
       body: {
-        "EmployerID": job.EmployerID,
-        "Title": job.title,
+        "id": "",        
+        "title": job.title,
         "description": job.description,
         "summary": job.summary,
         "applicantDetails": job.applicantDetails,
