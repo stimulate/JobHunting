@@ -1,9 +1,9 @@
-﻿import React from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
+import moment from 'moment';
 import Cookies from 'js-cookie';
 import { LoggedInNavigation } from '../../Layout/LoggedInNavigation.jsx';
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
 import { Dropdown } from 'semantic-ui-react'
 import { countryOptions } from '../common.js'
 import { JobDetailsCard } from './JobDetailsCard.jsx';
@@ -17,32 +17,32 @@ export default class CreateJob extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            jobData: {
-                id:"",
-                employerID:"",
-                title: "",
-                description: "",
-                summary: "",
-                applicantDetails: {
-                    yearsOfExperience: { years: 1, months: 1 },
-                    qualifications: [],
-                    visaStatus:[]
-                },
-                jobDetails: {
-                    categories: { category: "", subCategory: "" },
-                    jobType: [],
-                    startDate: moment(),
-                    salary: { from: 0, to: 0 },
-                    location: { country: "", city: ""}
-                }
+          jobData: {
+            id: "",
+            employerID: "",
+            title: "",
+            description: "",
+            summary: "",
+            applicantDetails: {
+              yearsOfExperience: { years: 1, months: 1 },
+              qualifications: [],
+              visaStatus: []
             },
+            jobDetails: {
+              categories: { category: "", subCategory: "" },
+              jobType: [],
+              startDate: moment(),
+              salary: { from: 0, to: 0 },
+              location: { country: "", city: "" }
+            }
+          },
             loaderData: loaderData
         }
         
         this.updateStateData = this.updateStateData.bind(this);
         this.addUpdateJob = this.addUpdateJob.bind(this);
         this.loadData = this.loadData.bind(this); 
-   
+      
         this.init = this.init.bind(this);
     };
 
@@ -118,7 +118,8 @@ export default class CreateJob extends React.Component {
                 }
                 
             }.bind(this)
-        })
+      })
+      
     }
 
     updateStateData(event) {
@@ -137,8 +138,9 @@ export default class CreateJob extends React.Component {
                     <div className="ui container">
                         <div className="ui grid">
                             <div className="row">
-                                <div className="sixteen wide center aligned padded column">
-                                    <h1>Create Job</h1>
+                    <div className="sixteen wide center aligned padded column">
+
+                      <h1>Create Job</h1>
                                 </div>
                             </div>
 

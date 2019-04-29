@@ -7,14 +7,17 @@ import { JobSummaryCard } from './JobSummaryCard.jsx';
 import { BodyWrapper, loaderData } from '../../Layout/BodyWrapper.jsx';
 import xhr from '../../../service';
 import { Pagination, Card, Label, Icon, Dropdown, Menu, Checkbox, Accordion, Form, Segment } from 'semantic-ui-react';
+import CreateJob from '../CreateJob/CreateJob.jsx';
 
 export default class ManageJob extends React.Component {
+  
     constructor(props) {
         super(props);
-        let loader = loaderData
+        let loader = loaderData;        
         loader.allowedUsers.push("Employer");
         loader.allowedUsers.push("Recruiter");
         //console.log(loader)
+    
         this.state = {
             loadJobs: [],
             loaderData: loader,
@@ -28,15 +31,17 @@ export default class ManageJob extends React.Component {
                 showDraft: true,
                 showExpired: true,
                 showUnexpired: true
-            },
+            },                
             store: [],
             totalPages: 1,
+            editSign: false,
             activeIndex: ""
         }
         this.loadData = this.loadData.bind(this);
         this.init = this.init.bind(this);
         this.loadNewData = this.loadNewData.bind(this);
         //your functions go here
+      console.log(this.state.jobData);
     };
 
     init() {
@@ -163,41 +168,68 @@ export default class ManageJob extends React.Component {
     loaderData.isLoading = false;
   }
 
-  copy = async (job) => {
-    var link = 'http://localhost:51689/listing/listing/createUpdateJob';
+  copy =  (job) => {
+    job.id = "";    
     var cookies = Cookies.get('talentAuthToken');
+    var jobData = {
+        id: "",
+        employerID: "",
+        title: job.title,
+      description: job.description,
+      summary: job.summary,
+      applicantDetails: job.applicantDetails,
+      jobDetails: job.jobDetails
+      }    
+  
     $.ajax({
-      url: link,
+      url: 'http://localhost:51689/listing/listing/createUpdateJob',
       headers: {
         'Authorization': 'Bearer ' + cookies,
         'Content-Type': 'application/json'
       },
-      body: {
-        "id": "",        
-        "title": job.title,
-        "description": job.description,
-        "summary": job.summary,
-        "applicantDetails": job.applicantDetails,
-        "jobDetails": job.jobDetails,        
-      },
-      type: "POST",
-      contentType: "application/json",
-      dataType: "json",
+      dataType: 'json',
+      type: "post",
+      data: JSON.stringify(jobData),
       success: function (res) {
-        console.log(res)
-      },
-      error: function (res) {
-        console.log("failure")
-      }
+        if (res.success == true) {
+          TalentUtil.notification.show(res.message, "success", null, null);
+          window.location = "/ManageJobs";
+
+        } else {
+          TalentUtil.notification.show(res.message, "error", null, null)
+          console.log(res)
+        }
+
+      }.bind(this)
     })
     this.loadData();
     loaderData.isLoading = false;
+  }
+
+  edit = (job) => {
+    setTimeout(() => {
+      this.setState({
+        jobData: {
+          id: job.id,
+          employerID: "",
+          title: job.title,
+          description: job.description,
+          summary: job.summary,
+          applicantDetails: job.applicantDetails,
+          jobDetails: job.jobDetails
+        },
+        editSign: true
+      });
+    }, 0)   
   }
     
   render() {
     
     var time = Date.now();
-
+    //if (this.state.editSign) {
+    //  return <CreateJob work={this} />
+    //}
+    
     const items = this.state.loadJobs.map(d =>
       (
         <Card key={d.id}>          
@@ -217,13 +249,13 @@ export default class ManageJob extends React.Component {
               <Menu.Item as='a' onClick={(e) => this.close(d.id, e)} >
                 <Icon name='ban' />Close
               </Menu.Item>
-              <Menu.Item as='a' onClick={(e) => this.edit(d.id, e)} >
+              <Menu.Item as='a' onClick={(e) => this.edit(d, e)} >
                 <Icon name='edit' />Edit
               </Menu.Item>
               <Menu.Item as='a' onClick={(e) => this.copy(d, e)} >
                 <Icon name='copy' />Copy
               </Menu.Item>
-            </Menu>                       
+            </Menu>                     
                         
             </Card.Content>          
         </Card>       
@@ -242,7 +274,7 @@ export default class ManageJob extends React.Component {
         return (
           <BodyWrapper reload={this.init} loaderData={this.state.loaderData}>
             <div style={{padding:"3em"}} >
-            <h1>List of Jobs</h1>
+              <h1>List of Jobs</h1>              
             <span><i className="icon filter" /> Filter:
                   <Dropdown
                   ref='filter'
